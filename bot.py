@@ -281,6 +281,16 @@ def compose(category, merchant, trigger, customer=None):
         "rationale": f"Dynamic {lx['chk']} synthesis for {kind} grounded in merchant context."
     }
 
+
+import threading, urllib.request
+def _keep_alive():
+    while True:
+        time.sleep(480)
+        try: urllib.request.urlopen("https://vera-bot-b8zk.onrender.com/v1/healthz", timeout=10).read()
+        except Exception: pass
+threading.Thread(target=_keep_alive, daemon=True).start()
+
+@app.api_route("/", methods=["GET", "HEAD"])
 @app.get("/v1/healthz")
 async def healthz():
     return {"status": "ok", "uptime_seconds": int(time.time() - START_TIME)}
